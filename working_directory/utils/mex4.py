@@ -1,5 +1,7 @@
 import random
-
+import re, sys, gzip
+from typing import Iterator, Tuple, List, Dict
+from pathlib import Path
 
 def _shape(w):
     return "".join(
@@ -99,3 +101,59 @@ def simple_split(X, Y, dev_ratio=0.1):
     Xtr = [X[i] for i in tr]; Ytr = [Y[i] for i in tr]
     Xdv = [X[i] for i in dv]; Ydv = [Y[i] for i in dv]
     return Xtr, Ytr, Xdv, Ydv
+
+
+def _basic_feats(tok: str) -> Dict[str, str]:
+    tl = sys.intern(tok.lower())
+    return {
+        "w": sys.intern(tok),
+        "w.lower": tl,
+        "is_title": "1" if tok.istitle() else "0",
+        "is_upper": "1" if tok.isupper() else "0",
+        "is_digit": "1" if tok.isdigit() else "0",
+        "pref3": sys.intern(tok[:3]),
+        "suf3": sys.intern(tok[-3:]),
+    }
+
+def read_conll_stream(path: Path) -> Iterator[Tuple[List[Dict[str, str]], List[str]]]:
+    """Yield (X_sent, y_sent) without holding the whole file in memory."""
+    op = gzip.open if str(path).endswith(".gz") else open
+    with op(path, "rt", encoding="utf-8", newline="") as f:
+        curX, curY = [], []
+        for raw in f:
+            line = raw.strip()
+            if not line:
+                if curX:
+                    yield curX, curY
+                    curX, curY = [], []
+                continue
+            if line.startswith("-DOCSTART-"):
+                continue
+            if "\t" in line:
+                tok, lab = line.split("\t", 1)
+            else:
+                cols = re.split(r"\s+", line)
+                if len(cols) < 2:
+                    continue
+                tok, lab = cols[0], cols[-1]
+            curX.append(_basic_feats(tok))
+            curY.append(sys.intern(lab))
+        if curX:
+            yield curX, curY
+
+def add_context_inplace(X_sent: List[Dict[str, str]], left: int = 1, right: int = 1) -> None:
+    n = len(X_sent)
+    for i in range(n):
+        feats = X_sent[i]
+        # left context
+        for k in range(1, left + 1):
+            if i - k >= 0:
+                feats[f"-{k}:w.lower"] = X_sent[i - k]["w.lower"]
+            else:
+                feats[f"-{k}:BOS"] = "1"
+        # right context
+        for k in range(1, right + 1):
+            if i + k < n:
+                feats[f"+{k}:w.lower"] = X_sent[i + k]["w.lower"]
+            else:
+                feats[f"+{k}:EOS"] = "1"
