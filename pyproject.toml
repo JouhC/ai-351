@@ -3,12 +3,14 @@ name = "ai-351"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
     "fastparquet>=2024.11.0",
+    "flair>=0.15.1",
+    "gensim>=4.3.2",
     "joblib>=1.5.1",
     "nltk>=3.9.1",
-    "numpy>=2.1.2",
+    "numpy<2",
     "pandas>=2.3.2",
     "pyarrow>=21.0.0",
     "pydantic-settings>=2.10.1",
@@ -33,3 +35,4 @@ torch = [
 torchvision = [
   { index = "pytorch-cu129", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
 ]
+gensim = { git = "https://github.com/piskvorky/gensim.git", rev = "da2f388" }

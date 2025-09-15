@@ -15,3 +15,5 @@ wheels/
 */cache/*
 
 *.zip
+
+working_directory/outputs/mex5/*
