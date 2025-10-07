@@ -45,6 +45,7 @@ dependencies = [
     { name = "python-crfsuite" },
     { name = "seqeval" },
     { name = "sklearn-crfsuite" },
+    { name = "smart-open", extra = ["s3"] },
     { name = "spacy" },
     { name = "tabulate" },
     { name = "torch", version = "2.8.0", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'linux' and sys_platform != 'win32'" },
@@ -72,6 +73,7 @@ requires-dist = [
     { name = "python-crfsuite", specifier = ">=0.9.11" },
     { name = "seqeval", specifier = ">=1.2.2" },
     { name = "sklearn-crfsuite", specifier = ">=0.5.0" },
+    { name = "smart-open", extras = ["s3"], specifier = ">=7.3.1" },
     { name = "spacy", specifier = ">=3.8.7" },
     { name = "tabulate", specifier = ">=0.9.0" },
     { name = "torch", marker = "sys_platform != 'linux' and sys_platform != 'win32'", specifier = ">=2.8.0" },
@@ -2375,6 +2377,11 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/16/be/bf2d60280a9d7fac98ece2150a22538fa4332cda67d04d9618c8406f791e/smart_open-7.3.1.tar.gz", hash = "sha256:b33fee8dffd206f189d5e704106a8723afb4210d2ff47e0e1f7fbe436187a990", size = 51405, upload-time = "2025-09-08T10:03:53.726Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e5/d9/460cf1d58945dd771c228c29d5664f431dfc4060d3d092fed40546b11472/smart_open-7.3.1-py3-none-any.whl", hash = "sha256:e243b2e7f69d6c0c96dd763d6fbbedbb4e0e4fc6d74aa007acc5b018d523858c", size = 61722, upload-time = "2025-09-08T10:03:52.02Z" },
+]
+
+[package.optional-dependencies]
+s3 = [
+    { name = "boto3" },
 ]
 
 [[package]]
